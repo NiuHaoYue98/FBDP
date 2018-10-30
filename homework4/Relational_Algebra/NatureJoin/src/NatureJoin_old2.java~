@@ -1,0 +1,166 @@
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import org.apache.hadoop.io.WritableComparable;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.NullWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.BytesWritable;
+
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.input.FileSplit;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+
+public class NatureJoin{
+	public static class RelationA{
+		private int id;
+		private String name;
+		private int age;
+		private int weight;
+
+		public RelationA(){}
+
+		public RelationA(String line){
+			String[] columns = line.split(",");
+			id = Integer.parseInt(columns[0]);
+			name = columns[1];
+			age = Integer.parseInt(columns[2]);
+			weight = Integer.parseInt(columns[3]);
+		}
+		public String getCol(int col) {
+			switch (col) {
+				case 0:return String.valueOf(id);
+				case 1:return name;
+				case 2:return String.valueOf(age);
+				case 3:return String.valueOf(weight);
+				default:
+				return null;
+			}
+		}
+		public String getValExcept(int col) {
+			switch (col) {
+				case 0:return name + "," + String.valueOf(age) + "," + String.valueOf(weight);
+				case 1:return String.valueOf(id) + "," + String.valueOf(age) + "," + String.valueOf(weight);
+				case 2:return String.valueOf(id) + "," + name + "," + String.valueOf(weight);
+				case 3:return String.valueOf(id) + "," + name + "," + String.valueOf(age);
+				default:
+				return null;
+			}
+		}
+	}
+	public static class RelationB{
+		private int id;
+		private String gender;
+		private int height;
+		
+		public RelationB(){}
+
+		public RelationB(String line){
+			String[] columns = line.split(",");
+			id = Integer.parseInt(columns[0]);
+			gender = columns[1];
+			height = Integer.parseInt(columns[2]);
+		}
+		public String getCol(int col) {
+			switch (col) {
+				case 0:return String.valueOf(id);
+				case 1:return gender;
+				case 2:return String.valueOf(height);
+				default:
+				return null;
+			}
+		}
+		public String getValExcept(int col) {
+			switch (col) {
+				case 0:return gender + "," + String.valueOf(height);
+				case 1:return String.valueOf(id) + "," + String.valueOf(height);
+				case 2:return String.valueOf(id) + "," + gender;
+				default:
+				return null;
+			}
+		}
+		
+	}
+
+	public static class NatureJoinMap extends Mapper<LongWritable, Text, Text, Text > {
+		//private Text map_key = new Text();
+		//private Text map_value = new Text();
+		private int col = 0;
+
+		@Override
+		protected void map(LongWritable offset, Text line, Context context) throws IOException, InterruptedException {
+			//String[] records = line.toString().split("\\n");
+			FileSplit split = (FileSplit)context.getInputSplit();
+		    	String filename = split.getPath().getName();
+		    	System.out.println(filename);
+			if(filename.contains("a")){
+				RelationA record = new RelationA();
+					//context.write(new Text(record.getCol(col)),new Text(relationName.toString() + " " + record.name + "," + record.age + "," + record.weight));
+				context.write(new Text(record.getCol(col)),new Text(filename + " " + record.getValExcept(col)));
+			}
+			else{
+				RelationB record = new RelationB();
+				context.write(new Text(record.getCol(col)),new Text(filename + " " + record.getValExcept(col)));}
+				//context.write(new Text(record.getCol(col)),new Text(relationName.toString() + " " + record.getValExcept(col)));	
+			}
+	    }
+	    public static class NatureJoinReduce extends Reducer<LongWritable, Text, Text, NullWritable> {
+		//private String relationNameA = "a";
+
+		//@Override
+		protected void reduce(LongWritable key, Iterable<Text> value, Context context) throws IOException, InterruptedException {
+			ArrayList<Text>setA = new ArrayList<Text>();
+			ArrayList<Text>setB = new ArrayList<Text>();
+			for (Text val : value){
+				String[] recordInfo = val.toString().split(" ");
+				if(recordInfo[0].contains("a"))
+					setA.add(new Text(recordInfo[1]));
+				else
+					setB.add(new Text(recordInfo[1]));			
+			}
+			for (int i = 0;i < 20;i++){
+				//for(int j = 0;j < setB.size();j++){
+					//System.out.println(i);
+					//System.out.println(j);
+					Text t = new Text(setA.get(i).toString() + "," + key.toString() + "," + setB.get(i).toString());
+					System.out.println(t);
+					context.write(t,NullWritable.get());
+				//}
+			}
+	    	}
+	   }
+
+	    public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
+		Configuration conf = new Configuration();
+		//conf.set("setR", args[2]);
+		//conf.set("setT",args[3]);
+		Job NatureJoinJob = Job.getInstance(conf, "NatureJoin");
+		NatureJoinJob.setJarByClass(NatureJoin.class);
+		NatureJoinJob.setMapperClass(NatureJoinMap.class);
+		NatureJoinJob.setReducerClass(NatureJoinReduce.class);
+
+		NatureJoinJob.setMapOutputKeyClass(Text.class);
+		NatureJoinJob.setMapOutputValueClass(Text.class);
+
+		NatureJoinJob.setOutputKeyClass(Text.class);
+		NatureJoinJob.setOutputValueClass(NullWritable.class);
+
+		//NatureJoinJob.setOutputFormatClass(TextOutputFormat.class);
+		
+		FileInputFormat.addInputPath(NatureJoinJob, new Path(args[0]));
+		FileOutputFormat.setOutputPath(NatureJoinJob, new Path(args[1]));
+
+		NatureJoinJob.waitForCompletion(true);
+		System.out.println("Over");
+	    }
+}
