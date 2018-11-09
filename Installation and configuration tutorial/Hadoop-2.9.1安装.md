@@ -18,7 +18,7 @@ niuhy@ubuntu:~$ sudo adduser hadoop sudo  
 ```
 niuhy@ubuntu:~$ sudo apt-get update 
 ```
-###安装配置ssh无密码登录
+### 安装配置ssh无密码登录
 * 安装ssh server
 ```
 hadoop@ubuntu:~$ sudo apt-get install openssh-server  
@@ -81,7 +81,7 @@ hadoop@ubuntu:/usr/local$ sudo chown -R hadoop hadoop-2.9.21  
 * 查看hadoop版本，验证是否安装成功
 ```
 hadoop@ubuntu:/usr/local$ hadoop-2.9.1/bin/hadoop version 
-``
+```
 
 ## 单机模式Hadoop配置及样例运行
 ### 进入/usr/local/hadoop-2.9.1目录
