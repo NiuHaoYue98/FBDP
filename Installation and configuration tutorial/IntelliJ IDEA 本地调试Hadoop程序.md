@@ -8,7 +8,11 @@ JDK|1.7.1|/usr/bin/java
 
 ## 安装IDEA
 * JetBrains官网下载最新版IntelliJ IDEA Linux系统的安装包，我下载的是ideaIU-2018.2.5.tar.gz
-* 将压缩包移动到/opt目录下，解压`cp ideaIU-2018.2.5.tar.gz /opt`、`tar zxvf ideaIU-2018.2.5.tar.gz`解压出来的名字是`idea-IU-182.4892.20`
+* 将压缩包移动到/opt目录下，解压,解压出来的文件夹名字是`idea-IU-182.4892.20`
+```
+cp ideaIU-2018.2.5.tar.gz /opt
+tar zxvf ideaIU-2018.2.5.tar.gz
+```
 * 进入`/opt/idea-IU-182.4892.20/bin`目录，运行`./idea.sh`即可开始安装，根据安装步骤操作即可
 
 ## Hadoop开发环境搭建
