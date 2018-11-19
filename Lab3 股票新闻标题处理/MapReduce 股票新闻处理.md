@@ -124,8 +124,9 @@ public static class FirstGroupingComparator implements RawComparator<IntPair> {
 
 ## 类说明
 | 类名 | 功能 | Map | Reduce |
-| :---         |     :---       |          :--- |
+| :---         |     :---       |          :--- | :--
 |InvertedIndex|分词，统计单个文件中词频，整合单个文件中url信息|`(<word,id> <url>)`| `(<word sum> <id url1,url2……>)`|
+
 输出样例
 
 ``` 
@@ -133,7 +134,7 @@ A股 1	sh600007 http://finance.sina.com.cn/stock/s/2017-01-20/doc-ifxzuswr961466
 ```
 
 | 类名 | 功能 | Map | Reduce |
-| :---         |     :---       |          :--- |
+| :---         |     :---       |          :--- | :--
 |WordCount|统计全局词频，同时保留文件词频及url信息 |`(<word> <id sum url1,url2……>)`|`（<word totalsum> <sum,id,url1,urs2…… sum,id,url1,urs2…… >）`|
 
 输出样例
@@ -143,12 +144,12 @@ A股 1	sh600007 http://finance.sina.com.cn/stock/s/2017-01-20/doc-ifxzuswr961466
 ```
 
 | 类名 | 功能 |Map | Reduce |
-| :---         |     :---       |          :--- |
+| :---         |     :---       |          :--- | :--
 |Sort|排序|`(<IntPair> <word,id,urls>)`|`(<totalnum word> <"\n"id sum urls>)`|
+
 输出样例
 
 ```
-样例  
 6 解除	
 sz000005 2 http://finance.sina.com.cn/stock/t/2016-12-29/doc-ifxzcvfp5098389.shtml http://finance.sina.com.cn/stock/t/2017-01-04/doc-ifxzczsu6735346.shtml
 sh600528 1 http://finance.sina.com.cn/stock/t/2017-03-23/doc-ifycsukm3247854.shtml
