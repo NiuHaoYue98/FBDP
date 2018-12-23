@@ -24,7 +24,9 @@
 |功能|文件/函数 | 结果文件 | 输出格式 |
 | :---: |:---:| :---: | --- |
 | 提取特征词| `tf-idf.py`	|`./py/negative.txt`、`./py/positive.txt`、`./py/neutral.txt` |`下滑	0.01766767815160078`|
+
 核心代码：
+```
 
     for i in range(0,len(files)):
     f = open(path + "/" + str(i) + ".txt")
@@ -39,32 +41,32 @@
     for item in keywords:
         print (item[0], item[1])
         new_file.write(item[0] + "\t" + str(item[1]) + "\n")
-
+```
 |功能|文件/函数 | 结果文件 | 输出格式 |
 | :---: |:---:| :---: | --- |
 |训练样本特征化|`features.txt`|`train.txt`|`12	0.07457087611974442 0 0 0 0 0 0.05187946315696957 ······ 0.0022368721591347557 0 0.0022262100354080144 0 0 0 0 negative `|
 |测试样本特征化| `stockwords.py` |`test.txt`|`sh600000浦发银行	0.07457087611974442 0 0 0 0 0 0 0.026442377281342792 0.027889043415843688 0 0 0 0 0 0 0  ······ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0022128256896506064 -1 `|
 
 核心代码：
-
-			one = []
-			one.append(index)
-            for word in featurelist.keys():
-                if word in text:
-                    one.append(featurelist[word][0])
-                else:
-                    one.append(0)
-            one.append(name)
-            j = 0
-            for item in one:
-                if j == 0:
+```
+one = []
+one.append(index)
+for word in featurelist.keys():
+	if word in text:
+		one.append(featurelist[word][0])
+       	else:
+           	one.append(0)
+	one.append(name)
+       	j = 0
+	for item in one:
+        	if j == 0:
                     newfile.write(str(item) + '\t')
                 else:
                     newfile.write(str(item) + ' ')
-                j = j + 1
-            newfile.write('\n')
+       	j = j + 1
+	newfile.write('\n')
 
-
+```
 
 ### 模型训练
 	KNN
@@ -74,6 +76,7 @@
 	4. Reduce阶段直接将序号和类别输出到结果文件
 	
 核心代码：
+```
 
             for (int i = 0; i < trainSet.size(); i++) {
                	testInstance.getattr().length);
@@ -94,7 +97,7 @@
                     e.printStackTrace();
                 }
             }
-
+```
 #
 	朴素贝叶斯
 	1. 从文件系统中读入训练集和测试集的数据
@@ -104,6 +107,7 @@
 
 
 核心代码：
+```
 
             while(scan.hasNextLine())
             {
@@ -121,13 +125,13 @@
                     context.write(word, one);
                 }
             }
-
+```
 
 ### 分类算法评估
 将数据集划分为K（K=10）个大小相同的互斥子集，每次用K-1(9)个作为训练集，剩余的一个作为测试集，使用上述的分类算法得到结果，与原本的训练集结果做出比较。使用了Cross（用于划分文件）和Analysis(用于统计结果)
 
 * Cross ：划分训练集
-
+```
             if (id < min || id >= max) {
                 IntWritable textIndex = new IntWritable();
                 textIndex.set(id);
@@ -142,9 +146,9 @@
                 cont.set(mes);
                 context.write(textIndex, cont);
             }
-
+```
 * Analysis：统计每一类中的数目以及正确的数目
-
+```
             if(tag.equals(trainSet.get(index).tag))
                 classkey.set("correct_" + tag);
             else
@@ -152,7 +156,7 @@
             context.write(classkey,one);
             classkey.set("total");
             context.write(classkey,one);
-
+```
 
 ## 类说明
 | 类名 | 功能 | Map | Reduce |
