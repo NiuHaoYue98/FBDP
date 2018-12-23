@@ -172,7 +172,7 @@ for word in featurelist.keys():
 ## 执行及结果分析
 * 程序执行时输入的参数为：`finalinput/train.txt finalinput/test.txt 3 newcrossoutput 10 crossinput`
 * 完成实验是分阶段进行的，因此KNN，CrossTest，NaiveBayes没有同时在Driver中执行。如果同时执行NaiveBayes输出结果会覆盖KNN的结果。执行代码时可以考虑注释掉某一部分以提高效率
-* KNNKNN分类结果文件为`KNNoutput.txt`，朴素贝叶斯分类结果文件为`NavieBayes/result.txt`
+* KNN分类结果文件为`KNNoutput.txt`，朴素贝叶斯分类结果文件为`NavieBayes/result.txt`
 * KNN交叉验证得到的分类准确率为43.88%，准确率较低。
 * 朴素贝叶斯算法中由于连乘的计算方法，可能导致数据过过大而溢出。因此在程序中采用了超过某一阈值就缩小倍数的方法。调试时统计了每个股票比较时的缩放次数，发现positive和neutral的次数相近，而negative的缩放次数明显较小，因此最终结果里几乎没有negative类型的新闻，与KNN分类的结果类似。
 
